@@ -3,12 +3,17 @@ import {MembersController} from "../../src/members/members.controller";
 import {MembersService} from "../../src/members/members.service";
 import {Test, TestingModule} from "@nestjs/testing";
 import {Members} from "../../src/members/members.entity";
+import {UpdateMemberDto} from "../../src/members/dto/update-member.dto";
 
 const createMemberDto: CreateMemberDto = {
     name: 'Maksym Vasylchenko',
     age: 19,
     parents: []
 };
+
+const updateMemberDto: UpdateMemberDto = {
+    age: 19
+}
 
 describe('Members Controller', () => {
     let membersController: MembersController;
@@ -36,6 +41,13 @@ describe('Members Controller', () => {
                                     parents: []
                                 }
                             ]),
+                        updateMember: jest
+                            .fn()
+                            .mockResolvedValue({
+                                name: 'Maksym Vasylchenko',
+                                age: 19,
+                                parents: []
+                            }),
                         deleteMember: jest.fn()
 
                     }
@@ -61,6 +73,20 @@ describe('Members Controller', () => {
             expect(membersService.createMember).toHaveBeenCalledWith(createMemberDto);
         });
     });
+
+    describe('updateMember()', () => {
+        it('should update a member', () => {
+            const result = membersController.updateMember(updateMemberDto, 1)
+
+            expect(result).resolves.toEqual({
+                id: 1,
+                ...updateMemberDto
+            })
+
+            expect(membersService.updateMember).toHaveBeenCalledWith(updateMemberDto, 1);
+
+        })
+    })
 
     describe('getAll()', () => {
         it('should find all members ', () => {

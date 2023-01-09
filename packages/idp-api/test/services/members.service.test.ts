@@ -38,6 +38,7 @@ describe('Members Service', () => {
                     useValue: {
                         find: jest.fn().mockResolvedValue(membersArray),
                         save: jest.fn().mockResolvedValue(oneMember),
+                        findOne: jest.fn().mockResolvedValue(oneMember),
                         delete: jest.fn()
                     }
                 }
@@ -76,6 +77,23 @@ describe('Members Service', () => {
             expect(users).toEqual(membersArray);
         });
     });
+
+    describe('updateMember()', () => {
+        it('should return updated member', async () => {
+            const findOneSpy = jest.spyOn(repository, 'findOne');
+
+            const updatedUser = await service.updateMember({
+                age: 23
+            }, 2)
+
+            expect(findOneSpy).toBeCalledWith({
+                where: {
+                    id: 2
+                }
+            })
+            expect(updatedUser).toEqual(oneMember)
+        })
+    })
 
     describe('deleteMember()', () => {
         it('should call remove with the passed value', async () => {
